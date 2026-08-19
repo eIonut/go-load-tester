@@ -4,6 +4,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"net/http"
+	"time"
 )
 
 type LoadTestArgs struct {
@@ -18,10 +20,58 @@ type UserInput struct {
 	targetURL      string
 }
 
+type LoadTestStatistics struct {
+	statusCode  int
+	elapsedTime time.Duration
+	err         error
+}
+
+type LoadTestSummary struct {
+	totalRequests   int
+	successRequests int
+	failedRequests  int
+	averageLatency  time.Duration
+	minLatency      time.Duration
+	maxLatency      time.Duration
+}
+
 const defaultRequestsNumber = 100
 const defaultWorkersNumber = 10
 
+func readUserInput(input LoadTestArgs) (UserInput, error) {
+
+	if *input.workersNumber <= 0 || *input.requestsNumber <= 0 {
+		return UserInput{}, errors.New("You must supply a number of workers and requests > 0")
+	}
+
+	if *input.targetURL == "" {
+		return UserInput{}, errors.New("No URL supplied")
+	}
+
+	return UserInput{requestsNumber: *input.requestsNumber, targetURL: *input.targetURL, workersNumber: *input.workersNumber}, nil
+}
+
+func makeApiRequest(url string, ch chan LoadTestStatistics) {
+	start := time.Now()
+
+	resp, err := http.Get(url)
+
+	if err != nil {
+		ch <- LoadTestStatistics{
+			err: err,
+		}
+		return
+	}
+
+	defer resp.Body.Close()
+
+	elapsedTime := time.Since(start)
+
+	ch <- LoadTestStatistics{statusCode: resp.StatusCode, elapsedTime: elapsedTime, err: nil}
+}
+
 func main() {
+	statistics := make(chan LoadTestStatistics)
 
 	requestsNumber := flag.Int("requests", defaultRequestsNumber, "Total number of requests to be executed")
 	targetURL := flag.String("url", "", "Target URL to stress test")
@@ -36,18 +86,19 @@ func main() {
 		return
 	}
 
-	fmt.Println(userInput)
-}
+	results := make([]LoadTestStatistics, 0, userInput.requestsNumber)
 
-func readUserInput(input LoadTestArgs) (UserInput, error) {
-
-	if *input.workersNumber <= 0 || *input.requestsNumber <= 0 {
-		return UserInput{}, errors.New("You must supply a number of workers and requests > 0")
+	for range userInput.requestsNumber {
+		go makeApiRequest(userInput.targetURL, statistics)
 	}
 
-	if *input.targetURL == "" {
-		return UserInput{}, errors.New("No URL supplied")
+	for range userInput.requestsNumber {
+		results = append(results, <-statistics)
 	}
 
-	return UserInput{requestsNumber: *input.requestsNumber, targetURL: *input.targetURL, workersNumber: *input.workersNumber}, nil
+	//TODO: add a summary
+	for _, res := range results {
+		fmt.Println(res)
+	}
+
 }
