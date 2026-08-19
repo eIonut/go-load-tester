@@ -18,14 +18,14 @@ type UserInput struct {
 	targetURL      string
 }
 
-const DEFAULT_REQUESTS_NUMBER = 100
-const DEFAULT_WORKERS_NUMBER = 10
+const defaultRequestsNumber = 100
+const defaultWorkersNumber = 10
 
 func main() {
 
-	requestsNumber := flag.Int("requests", DEFAULT_REQUESTS_NUMBER, "Total number of requests to be executed")
+	requestsNumber := flag.Int("requests", defaultRequestsNumber, "Total number of requests to be executed")
 	targetURL := flag.String("url", "", "Target URL to stress test")
-	workersNumber := flag.Int("workers", DEFAULT_WORKERS_NUMBER, "The number of workers to execute jobs")
+	workersNumber := flag.Int("workers", defaultWorkersNumber, "The number of workers to execute jobs")
 
 	flag.Parse()
 
@@ -45,7 +45,7 @@ func readUserInput(input LoadTestArgs) (UserInput, error) {
 		return UserInput{}, errors.New("You must supply a number of workers and requests > 0")
 	}
 
-	if len(*input.targetURL) == 0 {
+	if *input.targetURL == "" {
 		return UserInput{}, errors.New("No URL supplied")
 	}
 
