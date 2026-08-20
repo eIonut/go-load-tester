@@ -15,7 +15,7 @@ The tool should send multiple HTTP requests concurrently to a target URL and dis
 - [x] Number of concurrent workers
 - [x] Validate that requests > 0
 - [x] Validate that workers > 0
-- [ ] Validate that the supplied URL is a valid HTTP/HTTPS URL
+- [x] Validate that the supplied URL is a valid HTTP/HTTPS URL
 
 Example:
 
@@ -62,8 +62,8 @@ After all requests are completed, display:
 - [x] Total execution time
 - [x] Average latency
 - [x] Requests per second
-- [ ] Minimum latency
-- [ ] Maximum latency
+- [x] Minimum latency
+- [x] Maximum latency
 
 Example output:
 
@@ -94,11 +94,11 @@ Handle basic errors such as:
 
 ## Remaining MVP Work
 
-- [ ] Add proper URL validation
+- [x] Add proper URL validation
 - [ ] Create and reuse an `http.Client`
 - [ ] Add an HTTP request timeout
-- [ ] Calculate minimum latency
-- [ ] Calculate maximum latency
+- [x] Calculate minimum latency
+- [x] Calculate maximum latency
 - [ ] Clean up `LoadTestStatistics` so it represents only one request
 - [ ] Improve CLI output formatting
 - [ ] Test with different combinations of requests/workers

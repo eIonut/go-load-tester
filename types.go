@@ -3,9 +3,9 @@ package main
 import "time"
 
 type LoadTestArgs struct {
-	requestsNumber *int
-	workersNumber  *int
-	targetURL      *string
+	requestsNumber int
+	workersNumber  int
+	targetURL      string
 }
 
 type UserInput struct {

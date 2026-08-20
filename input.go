@@ -6,18 +6,22 @@ import (
 )
 
 func readUserInput(input LoadTestArgs) (UserInput, error) {
-	if *input.workersNumber <= 0 || *input.requestsNumber <= 0 {
+	if input.workersNumber <= 0 || input.requestsNumber <= 0 {
 		return UserInput{}, errors.New("you must supply a number of workers and requests > 0")
 	}
 
-	if *input.targetURL == "" {
+	if input.targetURL == "" {
 		return UserInput{}, errors.New("no URL supplied")
 	}
 
+	if err := parseURL(input.targetURL); err != nil {
+		return UserInput{}, err
+	}
+
 	return UserInput{
-		requestsNumber: *input.requestsNumber,
-		targetURL:      *input.targetURL,
-		workersNumber:  *input.workersNumber,
+		requestsNumber: input.requestsNumber,
+		targetURL:      input.targetURL,
+		workersNumber:  input.workersNumber,
 	}, nil
 }
 
@@ -42,5 +46,5 @@ func getCommandFlags() LoadTestArgs {
 
 	flag.Parse()
 
-	return LoadTestArgs{requestsNumber: requestsNumber, targetURL: targetURL, workersNumber: workersNumber}
+	return LoadTestArgs{requestsNumber: *requestsNumber, targetURL: *targetURL, workersNumber: *workersNumber}
 }
