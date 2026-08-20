@@ -21,19 +21,17 @@ type UserInput struct {
 }
 
 type LoadTestStatistics struct {
-	statusCode      int
-	elapsedTime     time.Duration
-	successfulCount int
-	failureCount    int
-	err             error
+	statusCode  int
+	elapsedTime time.Duration
+	err         error
 }
 
 type LoadTestSummary struct {
-	totalRequests   int
-	successRequests int
-	failedRequests  int
-	averageLatency  time.Duration
-	totalDuration   time.Duration
+	totalRequests     int
+	successRequests   int
+	failedRequests    int
+	averageLatency    time.Duration
+	totalTestDuration time.Duration
 }
 
 const defaultRequestsNumber = 100
@@ -60,26 +58,22 @@ func makeApiRequest(url string) LoadTestStatistics {
 	if err != nil {
 		fmt.Println("Err:", err)
 		return LoadTestStatistics{
-			failureCount:    1,
-			successfulCount: 0,
-			err:             err,
+			err: err,
 		}
 	}
 
 	defer resp.Body.Close()
 
 	return LoadTestStatistics{
-		statusCode:      resp.StatusCode,
-		elapsedTime:     time.Since(start),
-		failureCount:    0,
-		successfulCount: 1,
+		statusCode:  resp.StatusCode,
+		elapsedTime: time.Since(start),
 	}
 }
 
 func worker(jobs <-chan struct{}, results chan<- LoadTestStatistics, url string) {
 	for range jobs {
 		result := makeApiRequest(url)
-		results <- LoadTestStatistics{successfulCount: result.successfulCount, failureCount: result.failureCount, err: result.err, statusCode: result.statusCode, elapsedTime: result.elapsedTime}
+		results <- result
 	}
 }
 
@@ -89,15 +83,13 @@ func aggregateStatistics(statistics []LoadTestStatistics) LoadTestSummary {
 	var totalLatency time.Duration
 
 	for _, s := range statistics {
-		summary.successRequests += s.successfulCount
-		summary.failedRequests += s.failureCount
-
-		if s.err == nil {
+		if s.err != nil {
+			summary.failedRequests++
+		} else {
+			summary.successRequests++
 			totalLatency += s.elapsedTime
 		}
 	}
-
-	summary.totalDuration = totalLatency
 
 	if summary.successRequests > 0 {
 		summary.averageLatency = totalLatency / time.Duration(summary.successRequests)
@@ -128,6 +120,8 @@ func main() {
 	workers := min(userInput.workersNumber, userInput.requestsNumber)
 	statistics := make([]LoadTestStatistics, 0, userInput.requestsNumber)
 
+	start := time.Now()
+
 	for range workers {
 		go worker(jobs, results, userInput.targetURL)
 	}
@@ -136,7 +130,11 @@ func main() {
 		statistics = append(statistics, <-results)
 	}
 
+	totalTestDuration := time.Since(start)
+
 	summary := aggregateStatistics(statistics)
+	summary.totalTestDuration = totalTestDuration
+	requestsPerSecond := float64(summary.totalRequests) / summary.totalTestDuration.Seconds()
 
 	fmt.Println("Load test completed")
 	fmt.Println("")
@@ -144,7 +142,8 @@ func main() {
 	fmt.Println("Successful:", summary.successRequests)
 	fmt.Println("Failed:", summary.failedRequests)
 	fmt.Println("")
-	fmt.Println("Total duration:", summary.totalDuration)
-	fmt.Println("Average latency:", summary.averageLatency)
+	fmt.Printf("Total test duration: %.2f ms\n", summary.totalTestDuration.Seconds()*1000)
+	fmt.Printf("Average latency: %.2f ms\n", summary.averageLatency.Seconds()*1000)
+	fmt.Println("Requests/sec:", int(requestsPerSecond))
 
 }
