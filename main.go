@@ -58,8 +58,12 @@ func main() {
 
 	summary := aggregateStatistics(statistics)
 	summary.totalTestDuration = totalTestDuration
-	summary.requestsPerSecond =
-		float64(summary.totalRequests) /
+	summary.failedRequestsPerSecond =
+		float64(summary.failedRequests) /
+			summary.totalTestDuration.Seconds()
+
+	summary.successfulRequestsPerSecond =
+		float64(summary.successRequests) /
 			summary.totalTestDuration.Seconds()
 
 	printLoadTestSummary(summary)

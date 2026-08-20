@@ -21,12 +21,14 @@ type LoadTestStatistics struct {
 }
 
 type LoadTestSummary struct {
-	totalRequests     int
-	successRequests   int
-	failedRequests    int
-	averageLatency    time.Duration
-	totalTestDuration time.Duration
-	minimumLatency    time.Duration
-	maximumLatency    time.Duration
-	requestsPerSecond float64
+	totalRequests               int
+	successRequests             int
+	failedRequests              int
+	averageLatency              time.Duration
+	totalTestDuration           time.Duration
+	minimumLatency              time.Duration
+	maximumLatency              time.Duration
+	failedRequestsPerSecond     float64
+	successfulRequestsPerSecond float64
+	errorCounts                 map[string]int
 }
