@@ -26,4 +26,7 @@ type LoadTestSummary struct {
 	failedRequests    int
 	averageLatency    time.Duration
 	totalTestDuration time.Duration
+	minimumLatency    time.Duration
+	maximumLatency    time.Duration
+	requestsPerSecond float64
 }

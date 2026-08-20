@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"time"
 )
@@ -10,30 +9,12 @@ const defaultRequestsNumber = 100
 const defaultWorkersNumber = 10
 
 func main() {
-	requestsNumber := flag.Int(
-		"requests",
-		defaultRequestsNumber,
-		"Total number of requests to be executed",
-	)
-
-	targetURL := flag.String(
-		"url",
-		"",
-		"Target URL to stress test",
-	)
-
-	workersNumber := flag.Int(
-		"workers",
-		defaultWorkersNumber,
-		"The number of workers to execute jobs",
-	)
-
-	flag.Parse()
+	commandFlags := getCommandFlags()
 
 	userInput, err := readUserInput(LoadTestArgs{
-		requestsNumber: requestsNumber,
-		targetURL:      targetURL,
-		workersNumber:  workersNumber,
+		requestsNumber: commandFlags.requestsNumber,
+		targetURL:      commandFlags.targetURL,
+		workersNumber:  commandFlags.workersNumber,
 	})
 
 	if err != nil {
@@ -76,27 +57,10 @@ func main() {
 
 	summary := aggregateStatistics(statistics)
 	summary.totalTestDuration = totalTestDuration
-
-	requestsPerSecond :=
+	summary.requestsPerSecond =
 		float64(summary.totalRequests) /
 			summary.totalTestDuration.Seconds()
 
-	fmt.Println("Load test completed")
-	fmt.Println()
-	fmt.Println("Total requests:", summary.totalRequests)
-	fmt.Println("Successful:", summary.successRequests)
-	fmt.Println("Failed:", summary.failedRequests)
-	fmt.Println()
-	fmt.Printf(
-		"Total test duration: %.2f ms\n",
-		summary.totalTestDuration.Seconds()*1000,
-	)
-	fmt.Printf(
-		"Average latency: %.2f ms\n",
-		summary.averageLatency.Seconds()*1000,
-	)
-	fmt.Printf(
-		"Requests/sec: %.2f\n",
-		requestsPerSecond,
-	)
+	printLoadTestSummary(summary)
+
 }
