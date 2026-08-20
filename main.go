@@ -64,9 +64,19 @@ func makeApiRequest(url string) LoadTestStatistics {
 
 	defer resp.Body.Close()
 
+	elapsedTime := time.Since(start)
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 400 {
+		return LoadTestStatistics{
+			statusCode:  resp.StatusCode,
+			elapsedTime: time.Since(start),
+		}
+	}
+
 	return LoadTestStatistics{
 		statusCode:  resp.StatusCode,
-		elapsedTime: time.Since(start),
+		elapsedTime: elapsedTime,
+		err:         fmt.Errorf("request failed with status code %d", resp.StatusCode),
 	}
 }
 

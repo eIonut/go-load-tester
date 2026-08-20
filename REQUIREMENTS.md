@@ -10,11 +10,12 @@ The tool should send multiple HTTP requests concurrently to a target URL and dis
 
 ### 1. CLI Input
 
-The application should accept:
-
-- Target URL
-- Total number of requests
-- Number of concurrent workers
+- [x] Target URL
+- [x] Total number of requests
+- [x] Number of concurrent workers
+- [x] Validate that requests > 0
+- [x] Validate that workers > 0
+- [ ] Validate that the supplied URL is a valid HTTP/HTTPS URL
 
 Example:
 
@@ -24,38 +25,45 @@ go-load --url https://example.com --requests 10000 --workers 50
 
 ### 2. HTTP Requests
 
-- Support `GET` requests only for the MVP.
-- Send the configured number of requests to the target URL.
-- Measure the duration of every request.
+- [x] Support `GET` requests only for the MVP
+- [x] Send the configured number of requests to the target URL
+- [x] Measure the duration of every request
+- [ ] Use a reusable `http.Client`
+- [ ] Configure a request timeout
 
 ### 3. Concurrency
 
 Use Go concurrency primitives:
 
-- Goroutines
-- Worker pool
-- `jobs` channel for distributing requests
-- `results` channel for collecting results
+- [x] Goroutines
+- [x] Worker pool
+- [x] `jobs` channel for distributing requests
+- [x] `results` channel for collecting results
+- [x] Limit the number of concurrent requests using the configured worker count
+- [x] Avoid starting more workers than requests
 
 ### 4. Request Result
 
 For every request, collect:
 
-- HTTP status code
-- Request duration / latency
-- Success or failure
-- Error, if one occurred
+- [x] HTTP status code
+- [x] Request duration / latency
+- [x] Error, if one occurred
+- [x] Detect transport/network failures
+- [x] Treat unsuccessful HTTP status codes as failures
 
 ### 5. Final Statistics
 
 After all requests are completed, display:
 
-- Total requests
-- Successful requests
-- Failed requests
-- Total execution time
-- Average latency
-- Requests per second
+- [x] Total requests
+- [x] Successful requests
+- [x] Failed requests
+- [x] Total execution time
+- [x] Average latency
+- [x] Requests per second
+- [ ] Minimum latency
+- [ ] Maximum latency
 
 Example output:
 
@@ -66,29 +74,49 @@ Total requests:     10000
 Successful:          9874
 Failed:               126
 
-Total duration:      12.4s
-Average latency:     58ms
-Requests/sec:        806.4
+Total duration:      12.40s
+Average latency:     58.20ms
+Min latency:         31.40ms
+Max latency:         412.80ms
+Requests/sec:        806.40
 ```
 
 ### 6. Error Handling
 
 Handle basic errors such as:
 
-- Invalid URL
-- Server unavailable
-- Request timeout
-- HTTP request errors
+- [ ] Invalid URL format
+- [x] Server unavailable / connection errors
+- [ ] Request timeout
+- [x] HTTP request errors
+- [x] HTTP error status codes (`4xx`, `5xx`)
+- [ ] Prevent division by zero or invalid statistics when no requests succeed
+
+## Remaining MVP Work
+
+- [ ] Add proper URL validation
+- [ ] Create and reuse an `http.Client`
+- [ ] Add an HTTP request timeout
+- [ ] Calculate minimum latency
+- [ ] Calculate maximum latency
+- [ ] Clean up `LoadTestStatistics` so it represents only one request
+- [ ] Improve CLI output formatting
+- [ ] Test with different combinations of requests/workers
+- [ ] Test failure scenarios: invalid URL, unreachable server, timeout, `404`, `500`
+- [ ] Run `go vet` on the project
+- [ ] Format the project with `gofmt`
 
 ## Out of Scope for MVP
 
 Do **not** implement yet:
 
-- POST / PUT / DELETE requests
+- POST / PUT / PATCH / DELETE requests
 - Custom headers
 - Request bodies / JSON
 - Authentication
-- Latency percentiles (`p95`, `p99`)
+- Latency percentiles (`p50`, `p95`, `p99`)
+- Rate limiting / requests-per-second target
+- Multiple target URLs
 - Charts
 - GUI
 - Export to files
@@ -96,10 +124,25 @@ Do **not** implement yet:
 
 ## First Milestone
 
-Implement a program that:
+- [x] Send multiple GET requests
+- [x] Use a worker pool
+- [x] Execute requests concurrently
+- [x] Collect results through channels
+- [x] Display basic statistics after all requests finish
 
-1. Sends **100 GET requests**
-2. Uses a **worker pool**
-3. Executes requests concurrently
-4. Collects results through channels
-5. Displays basic statistics after all requests finish
+**First milestone completed.**
+
+## MVP Completion Criteria
+
+The MVP is complete when the program can:
+
+- [ ] Receive URL, request count, and worker count from CLI
+- [ ] Validate the provided configuration
+- [ ] Execute all configured requests with controlled concurrency
+- [ ] Handle network errors, HTTP errors, and timeouts without crashing
+- [ ] Measure individual request latency
+- [ ] Measure total load test execution time
+- [ ] Calculate success and failure counts
+- [ ] Calculate average, minimum, and maximum latency
+- [ ] Calculate requests per second
+- [ ] Display a clean final summary
