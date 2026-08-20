@@ -1,21 +1,32 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 )
 
-func makeApiRequest(url string) LoadTestStatistics {
+func makeApiRequest(url string, client *http.Client) LoadTestStatistics {
 	start := time.Now()
 
-	resp, err := http.Get(url)
+	resp, err := client.Get(url)
 
 	if err != nil {
+		elapsedTime := time.Since(start)
+		if errors.Is(err, context.DeadlineExceeded) ||
+			errors.Is(err, os.ErrDeadlineExceeded) {
+			return LoadTestStatistics{
+				elapsedTime: elapsedTime,
+				err:         fmt.Errorf("request timed out: %w", err),
+			}
+		}
 		return LoadTestStatistics{
-			err: err,
+			elapsedTime: elapsedTime,
+			err:         err,
 		}
 	}
 
@@ -53,4 +64,8 @@ func parseURL(rawURL string) error {
 	}
 
 	return nil
+}
+
+func getConfiguredHTTPClient() *http.Client {
+	return &http.Client{Timeout: 5 * time.Second}
 }

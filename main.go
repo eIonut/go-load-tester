@@ -9,6 +9,7 @@ const defaultRequestsNumber = 100
 const defaultWorkersNumber = 10
 
 func main() {
+	client := getConfiguredHTTPClient()
 	commandFlags := getCommandFlags()
 
 	userInput, err := readUserInput(LoadTestArgs{
@@ -46,7 +47,7 @@ func main() {
 	start := time.Now()
 
 	for range workers {
-		go worker(jobs, results, userInput.targetURL)
+		go worker(jobs, results, userInput.targetURL, client)
 	}
 
 	for i := 0; i < userInput.requestsNumber; i++ {

@@ -28,8 +28,8 @@ go-load --url https://example.com --requests 10000 --workers 50
 - [x] Support `GET` requests only for the MVP
 - [x] Send the configured number of requests to the target URL
 - [x] Measure the duration of every request
-- [ ] Use a reusable `http.Client`
-- [ ] Configure a request timeout
+- [x] Use a reusable `http.Client`
+- [x] Configure a request timeout
 
 ### 3. Concurrency
 
@@ -85,9 +85,9 @@ Requests/sec:        806.40
 
 Handle basic errors such as:
 
-- [ ] Invalid URL format
+- [x] Invalid URL format
 - [x] Server unavailable / connection errors
-- [ ] Request timeout
+- [x] Request timeout
 - [x] HTTP request errors
 - [x] HTTP error status codes (`4xx`, `5xx`)
 - [ ] Prevent division by zero or invalid statistics when no requests succeed
