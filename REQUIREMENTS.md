@@ -101,10 +101,10 @@ Handle basic errors such as:
 - [x] Calculate maximum latency
 - [x] Clean up `LoadTestStatistics` so it represents only one request
 - [x] Improve CLI output formatting
-- [ ] Test with different combinations of requests/workers
-- [ ] Test failure scenarios: invalid URL, unreachable server, timeout, `404`, `500`
-- [ ] Run `go vet` on the project
-- [ ] Format the project with `gofmt`
+- [x] Test with different combinations of requests/workers
+- [x] Test failure scenarios: invalid URL, unreachable server, timeout, `404`, `500`
+- [x] Run `go vet` on the project
+- [x] Format the project with `gofmt`
 
 ## Out of Scope for MVP
 
@@ -113,14 +113,6 @@ Do **not** implement yet:
 - POST / PUT / PATCH / DELETE requests
 - Custom headers
 - Request bodies / JSON
-- Authentication
-- Latency percentiles (`p50`, `p95`, `p99`)
-- Rate limiting / requests-per-second target
-- Multiple target URLs
-- Charts
-- GUI
-- Export to files
-- Configuration files
 
 ## First Milestone
 

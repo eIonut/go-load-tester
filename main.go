@@ -57,6 +57,7 @@ func main() {
 	totalTestDuration := time.Since(start)
 
 	summary := aggregateStatistics(statistics)
+
 	summary.totalTestDuration = totalTestDuration
 	summary.failedRequestsPerSecond =
 		float64(summary.failedRequests) /
