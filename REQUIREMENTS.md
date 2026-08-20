@@ -95,12 +95,12 @@ Handle basic errors such as:
 ## Remaining MVP Work
 
 - [x] Add proper URL validation
-- [ ] Create and reuse an `http.Client`
-- [ ] Add an HTTP request timeout
+- [x] Create and reuse an `http.Client`
+- [x] Add an HTTP request timeout
 - [x] Calculate minimum latency
 - [x] Calculate maximum latency
-- [ ] Clean up `LoadTestStatistics` so it represents only one request
-- [ ] Improve CLI output formatting
+- [x] Clean up `LoadTestStatistics` so it represents only one request
+- [x] Improve CLI output formatting
 - [ ] Test with different combinations of requests/workers
 - [ ] Test failure scenarios: invalid URL, unreachable server, timeout, `404`, `500`
 - [ ] Run `go vet` on the project
@@ -136,13 +136,13 @@ Do **not** implement yet:
 
 The MVP is complete when the program can:
 
-- [ ] Receive URL, request count, and worker count from CLI
-- [ ] Validate the provided configuration
-- [ ] Execute all configured requests with controlled concurrency
-- [ ] Handle network errors, HTTP errors, and timeouts without crashing
-- [ ] Measure individual request latency
-- [ ] Measure total load test execution time
-- [ ] Calculate success and failure counts
-- [ ] Calculate average, minimum, and maximum latency
-- [ ] Calculate requests per second
-- [ ] Display a clean final summary
+- [x] Receive URL, request count, and worker count from CLI
+- [x] Validate the provided configuration
+- [x] Execute all configured requests with controlled concurrency
+- [x] Handle network errors, HTTP errors, and timeouts without crashing
+- [x] Measure individual request latency
+- [x] Measure total load test execution time
+- [x] Calculate success and failure counts
+- [x] Calculate average, minimum, and maximum latency
+- [x] Calculate requests per second
+- [x] Display a clean final summary

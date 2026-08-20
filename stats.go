@@ -46,32 +46,31 @@ func aggregateStatistics(statistics []LoadTestStatistics) LoadTestSummary {
 	return summary
 }
 
-func printLoadTestSummary(summary LoadTestSummary) {
-	fmt.Println("Load test completed")
-	fmt.Println()
-	fmt.Println("Total requests:", summary.totalRequests)
-	fmt.Println("Successful:", summary.successRequests)
-	fmt.Println("Failed:", summary.failedRequests)
-	fmt.Println()
+const (
+	reset  = "\033[0m"
+	green  = "\033[32m"
+	red    = "\033[31m"
+	yellow = "\033[33m"
+	cyan   = "\033[36m"
+)
 
-	fmt.Println(
-		"Total test duration:",
-		formatDuration(summary.totalTestDuration),
-	)
-	fmt.Println(
-		"Average latency:",
-		formatDuration(summary.averageLatency),
-	)
-	fmt.Println(
-		"Min latency:",
-		formatDuration(summary.minimumLatency),
-	)
-	fmt.Println(
-		"Max latency:",
-		formatDuration(summary.maximumLatency),
-	)
+func printLoadTestSummary(summary LoadTestSummary) {
+	fmt.Printf("%sLoad test completed%s\n\n", cyan, reset)
+
+	fmt.Printf("%-22s %d\n", "Total requests:", summary.totalRequests)
+	fmt.Printf("%-22s %s%d%s\n", "Successful:", green, summary.successRequests, reset)
+	fmt.Printf("%-22s %s%d%s\n", "Failed:", red, summary.failedRequests, reset)
+
+	fmt.Printf("%-22s %s\n", "Total test duration:", formatDuration(summary.totalTestDuration))
+	fmt.Printf("%-22s %s\n", "Average latency:", formatDuration(summary.averageLatency))
+	fmt.Printf("%-22s %s\n", "Min latency:", formatDuration(summary.minimumLatency))
+	fmt.Printf("%-22s %s\n", "Max latency:", formatDuration(summary.maximumLatency))
+
 	fmt.Printf(
-		"Requests/sec: %.0f\n",
+		"%-22s %s%.0f%s\n",
+		"Requests/sec:",
+		yellow,
 		summary.requestsPerSecond,
+		reset,
 	)
 }
