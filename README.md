@@ -49,14 +49,14 @@ go build .
 
 ## CLI Options
 
-| Flag | Description | Default |
-| --- | --- | --- |
-| `--url` | Target HTTP/HTTPS URL | required |
-| `--requests` | Total number of requests | `100` |
-| `--workers` | Maximum number of concurrent workers | `10` |
-| `--method` | HTTP method: GET, POST, PUT, PATCH, DELETE | `GET` recommended |
-| `--body` | Optional request body | empty |
-| `--header` | Optional custom header in `Key: Value` format | empty |
+| Flag         | Description                                   | Default           |
+| ------------ | --------------------------------------------- | ----------------- |
+| `--url`      | Target HTTP/HTTPS URL                         | required          |
+| `--requests` | Total number of requests                      | `100`             |
+| `--workers`  | Maximum number of concurrent workers          | `10`              |
+| `--method`   | HTTP method: GET, POST, PUT, PATCH, DELETE    | `GET` recommended |
+| `--body`     | Optional request body                         | empty             |
+| `--header`   | Optional custom header in `Key: Value` format | empty             |
 
 ## Examples
 
