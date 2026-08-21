@@ -7,16 +7,51 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 )
 
-func makeApiRequest(url string, client *http.Client) LoadTestStatistics {
+func makeApiRequest(
+	url string,
+	method string,
+	body string,
+	header string,
+	client *http.Client,
+) LoadTestStatistics {
 	start := time.Now()
 
-	resp, err := client.Get(url)
+	req, err := http.NewRequest(
+		method,
+		url,
+		strings.NewReader(body),
+	)
+
+	if err != nil {
+		return LoadTestStatistics{
+			err: err,
+		}
+	}
+
+	if header != "" {
+		parts := strings.SplitN(header, ":", 2)
+
+		if len(parts) != 2 {
+			return LoadTestStatistics{
+				err: errors.New("invalid header format"),
+			}
+		}
+
+		key := strings.TrimSpace(parts[0])
+		value := strings.TrimSpace(parts[1])
+
+		req.Header.Set(key, value)
+	}
+
+	resp, err := client.Do(req)
 
 	if err != nil {
 		elapsedTime := time.Since(start)
+
 		if errors.Is(err, context.DeadlineExceeded) ||
 			errors.Is(err, os.ErrDeadlineExceeded) {
 			return LoadTestStatistics{
@@ -24,6 +59,7 @@ func makeApiRequest(url string, client *http.Client) LoadTestStatistics {
 				err:         fmt.Errorf("request timed out: %w", err),
 			}
 		}
+
 		return LoadTestStatistics{
 			elapsedTime: elapsedTime,
 			err:         err,

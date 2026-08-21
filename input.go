@@ -22,6 +22,9 @@ func readUserInput(input LoadTestArgs) (UserInput, error) {
 		requestsNumber: input.requestsNumber,
 		targetURL:      input.targetURL,
 		workersNumber:  input.workersNumber,
+		method:         input.method,
+		body:           input.body,
+		header:         input.header,
 	}, nil
 }
 
@@ -44,7 +47,25 @@ func getCommandFlags() LoadTestArgs {
 		"The number of workers to execute jobs",
 	)
 
+	method := flag.String(
+		"method",
+		"GET",
+		"The method of the request: GET, POST, PUT, PATCH, DELETE",
+	)
+
+	body := flag.String(
+		"body",
+		"",
+		"The body of the request",
+	)
+
+	header := flag.String(
+		"header",
+		"",
+		"The header of the request",
+	)
+
 	flag.Parse()
 
-	return LoadTestArgs{requestsNumber: *requestsNumber, targetURL: *targetURL, workersNumber: *workersNumber}
+	return LoadTestArgs{requestsNumber: *requestsNumber, targetURL: *targetURL, workersNumber: *workersNumber, body: *body, method: *method, header: *header}
 }

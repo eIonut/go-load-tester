@@ -6,12 +6,18 @@ type LoadTestArgs struct {
 	requestsNumber int
 	workersNumber  int
 	targetURL      string
+	method         string
+	body           string
+	header         string
 }
 
 type UserInput struct {
 	requestsNumber int
 	workersNumber  int
 	targetURL      string
+	method         string
+	body           string
+	header         string
 }
 
 type LoadTestStatistics struct {

@@ -16,6 +16,9 @@ func main() {
 		requestsNumber: commandFlags.requestsNumber,
 		targetURL:      commandFlags.targetURL,
 		workersNumber:  commandFlags.workersNumber,
+		body:           commandFlags.body,
+		header:         commandFlags.header,
+		method:         commandFlags.method,
 	})
 
 	if err != nil {
@@ -47,7 +50,10 @@ func main() {
 	start := time.Now()
 
 	for range workers {
-		go worker(jobs, results, userInput.targetURL, client)
+		go worker(jobs, results, userInput.targetURL,
+			userInput.method,
+			userInput.body,
+			userInput.header, client)
 	}
 
 	for i := 0; i < userInput.requestsNumber; i++ {
